@@ -87,6 +87,12 @@ int load_565rle_image(char *filename)
 
 	max = fb_width(info) * fb_height(info);
 	ptr = data;
+	if (info->node == 1 || info->node == 2) {
+		err = -EPERM;
+		pr_err("%s:%d no info->creen_base on fb%d!\n",
+		       __func__, __LINE__, info->node);
+		goto err_logo_free_data;
+	}
 	bits = (unsigned char *)(info->screen_base);
 	while (count > 3) {
 		unsigned int n = ptr[0];
