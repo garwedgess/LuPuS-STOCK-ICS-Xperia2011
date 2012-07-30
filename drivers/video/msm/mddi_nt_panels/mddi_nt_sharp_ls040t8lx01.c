@@ -184,6 +184,7 @@ static struct msm_fb_panel_data *get_panel_info(void)
 {
 	novatek_panel_data.panel_info.xres = 480;
 	novatek_panel_data.panel_info.yres = 854;
+	MSM_FB_SINGLE_MODE_PANEL(&novatek_panel_data.panel_info);
 	novatek_panel_data.panel_info.bpp = 24;
 	novatek_panel_data.panel_info.type = MDDI_PANEL;
 	novatek_panel_data.panel_info.wait_cycle = 0;
