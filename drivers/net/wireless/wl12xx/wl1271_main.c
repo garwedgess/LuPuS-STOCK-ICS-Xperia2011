@@ -1102,6 +1102,7 @@ static struct ieee80211_channel wl1271_channels[] = {
 	{ .hw_value = 11, .center_freq = 2462},
 	{ .hw_value = 12, .center_freq = 2467},
 	{ .hw_value = 13, .center_freq = 2472},
+	{ .hw_value = 14, .center_freq = 2484},
 };
 
 /* can't be const, mac80211 writes to this */

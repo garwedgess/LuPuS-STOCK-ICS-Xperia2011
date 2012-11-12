@@ -27,8 +27,8 @@
 
 #include <linux/bitops.h>
 
-#define WL1271_RX_MAX_RSSI -30
-#define WL1271_RX_MIN_RSSI -95
+#define WL1271_RX_MAX_RSSI -20
+#define WL1271_RX_MIN_RSSI -115
 
 #define WL1271_RX_ALIGN_TO 4
 #define WL1271_RX_ALIGN(len) (((len) + WL1271_RX_ALIGN_TO - 1) & \
