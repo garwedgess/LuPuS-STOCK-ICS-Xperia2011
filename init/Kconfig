@@ -1082,6 +1082,11 @@ config SLOB
 	   allocator. SLOB is generally more space efficient but
 	   does not perform as well on large systems.
 
+config SLQB
+	bool "SLQB (Queued allocator)"
+	help
+	  SLQB is a proposed new slab allocator.
+
 endchoice
 
 config PROFILING
@@ -1132,7 +1137,7 @@ config HAVE_GENERIC_DMA_COHERENT
 config SLABINFO
 	bool
 	depends on PROC_FS
-	depends on SLAB || SLUB_DEBUG
+	depends on SLAB || SLUB_DEBUG || SLQB
 	default y
 
 config RT_MUTEXES
