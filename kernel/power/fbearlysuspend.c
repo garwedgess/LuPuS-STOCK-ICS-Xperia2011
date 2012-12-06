@@ -13,6 +13,7 @@
  *
  */
 
+#include <linux/delay.h>
 #include <linux/earlysuspend.h>
 #include <linux/module.h>
 #include <linux/wait.h>
@@ -33,6 +34,7 @@ static void stop_drawing_early_suspend(struct early_suspend *h)
 	int ret;
 	unsigned long irq_flags;
 
+	msleep (350);
 	spin_lock_irqsave(&fb_state_lock, irq_flags);
 	fb_state = FB_STATE_REQUEST_STOP_DRAWING;
 	spin_unlock_irqrestore(&fb_state_lock, irq_flags);
