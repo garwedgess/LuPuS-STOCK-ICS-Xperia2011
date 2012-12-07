@@ -1,0 +1,1 @@
+cmd_net/compat-wireless/compat/compat.o := /home/gar/android/Kitchens/scripts/../toolchains/arm-eabi-linaro-4.7.2/bin/arm-eabi-ld -EL    -r -o net/compat-wireless/compat/compat.o net/compat-wireless/compat/main.o 
