@@ -163,7 +163,7 @@ static int cpufreq_governor_darkside(struct cpufreq_policy *policy,
 static
 #endif
 struct cpufreq_governor cpufreq_gov_darkside = {
-        .name = "DARKSIDE",
+        .name = "darkside",
         .governor = cpufreq_governor_darkside,
         .max_transition_latency = 9000000,
         .owner = THIS_MODULE,
