@@ -49,16 +49,12 @@ endif
 obj-$(CONFIG_IP_DCCP)		+= dccp/
 obj-$(CONFIG_IP_SCTP)		+= sctp/
 obj-$(CONFIG_RDS)		+= rds/
-ifneq ($(CONFIG_COMPAT_WIRELESS),)
-obj-$(CONFIG_COMPAT_WIRELESS)   += compat-wireless/
-else
+obj-y				+= wireless/
 obj-$(CONFIG_MAC80211)		+= mac80211/
-obj-$(CONFIG_WIRELESS)		+= wireless/
-endif
-obj-$(CONFIG_RFKILL)		+= rfkill/
 obj-$(CONFIG_TIPC)		+= tipc/
 obj-$(CONFIG_NETLABEL)		+= netlabel/
 obj-$(CONFIG_IUCV)		+= iucv/
+obj-$(CONFIG_RFKILL)		+= rfkill/
 obj-$(CONFIG_NET_9P)		+= 9p/
 ifneq ($(CONFIG_DCB),)
 obj-y				+= dcb/

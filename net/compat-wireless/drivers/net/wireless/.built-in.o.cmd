@@ -1,1 +1,0 @@
-cmd_net/compat-wireless/drivers/net/wireless/built-in.o :=  /home/gar/android/Kitchens/scripts/../toolchains/arm-eabi-linaro-4.7.2/bin/arm-eabi-ld -EL    -r -o net/compat-wireless/drivers/net/wireless/built-in.o net/compat-wireless/drivers/net/wireless/wl12xx/built-in.o 

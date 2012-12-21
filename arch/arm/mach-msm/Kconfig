@@ -176,16 +176,6 @@ config MACH_MSM7X30_FLUID
        help
          Support for the Qualcomm MSM7x30 FLUID eval board.
 
-config MACH_SEMC_ZEUS
-	depends on ARCH_MSM7X30
-	depends on !MSM_STACKED_MEMORY
-	select SUPPORT_ALIEN_USB_CHARGER
-	select USE_PMIC_CHARGING_ON_AMSS
-	default y
-	bool "SonyEricsson Zeus"
-	help
-	  Support for the SonyEricsson Zeus devices.
-
 config MACH_SEMC_MOGAMI
        depends on ARCH_MSM7X30
        depends on !MSM_STACKED_MEMORY
@@ -272,26 +262,6 @@ config MACH_SEMC_COCONUT
 	bool "SonyEricsson Coconut"
 	help
 	  Support for the SonyEricsson Coconut devices.
-
-config MACH_SEMC_AKANE
-	depends on ARCH_MSM7X30
-	depends on !MSM_STACKED_MEMORY
-	select TI1271
-	select SUPPORT_ALIEN_USB_CHARGER
-	default y
-	bool "SonyEricsson Akane"
-	help
-	  Support for the SonyEricsson Akane devices.
-
-config MACH_SEMC_AZUSA
-	depends on ARCH_MSM7X30
-	depends on !MSM_STACKED_MEMORY
-	select TI1271
-	select SUPPORT_ALIEN_USB_CHARGER
-	default y
-	bool "SonyEricsson Azusa"
-	help
-	  Support for the SonyEricsson Azusa devices.
 
 config MACH_SEMC_HAIDA
 	depends on ARCH_MSM7X30
@@ -511,6 +481,14 @@ choice
 	config MSM_AMSS_VERSION_6225
 		bool "6.2.20 + New ADSP"
 endchoice
+
+config TI1271
+	bool "Use connectivity driver and config for TI1271"
+	default n
+	select WIRELESS_EXT
+	select WEXT_PRIV
+	help
+	  This option enables support for TI1271 Wilink driver.
 
 config MSM_DEBUG_UART
 	int
@@ -1138,13 +1116,6 @@ config MOGAMI_SLIDER
 	default n
 	help
 	  Select if GPIO slider switch is attached.
-
-config ZEUS_GPIO_KEYPAD
-        bool "Zeus GPIO keypad"
-        depends on INPUT_GPIO = "y"
-        default y
-        help
-          Select if the GPIO keypad is attached.
 
 config MOGAMI_VIBRATOR
 	bool "Mogami Vibrator"

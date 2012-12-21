@@ -1,1 +1,0 @@
-cmd_net/compat-wireless/net/mac80211/built-in.o :=  /home/gar/android/Kitchens/scripts/../toolchains/arm-eabi-linaro-4.7.2/bin/arm-eabi-ld -EL    -r -o net/compat-wireless/net/mac80211/built-in.o net/compat-wireless/net/mac80211/mac80211.o 
