@@ -27,8 +27,6 @@
 #include <mach/qdsp5v2/marimba_profile_phoenix.h>
 #elif defined(CONFIG_MACH_SEMC_COCONUT)
 #include <mach/qdsp5v2/marimba_profile_coconut.h>
-#elif defined(CONFIG_MACH_SEMC_ZEUS)
-#include <mach/qdsp5v2/marimba_profile_zeus.h>
 #else
 #include <mach/qdsp5v2/marimba_profile_platform.h>
 #endif
