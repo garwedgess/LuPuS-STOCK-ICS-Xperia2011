@@ -32,9 +32,9 @@ struct cyttsp_platform_data cyttsp_data = {
 	.use_load_file = 1,
 	.use_force_fw_update = 0,
 	/* activate up groups */
-	.gest_set = CY_GEST_KEEP_ASIS,
+	.gest_set = 0,
 	/* set active distance */
-	.act_dist = CY_ACT_DIST_01,
+	.act_dist = CY_ACT_DIST_03,
 	/* change act_intrvl to customize the Active power state
 	 * scanning/processing refresh interval for Operating mode
 	 */
