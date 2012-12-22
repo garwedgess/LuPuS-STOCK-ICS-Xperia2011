@@ -189,8 +189,8 @@
 #define MSM_PMEM_CAMERA_SIZE    0x3000000
 #define MSM_PMEM_ADSP_SIZE      0x1000000
     /* Will come back to this later for 480p recording only */
-/*#define MSM_PMEM_CAMERA_SIZE    0x2A00000
-#define MSM_PMEM_ADSP_SIZE      0x0700000*/
+/* #define MSM_PMEM_CAMERA_SIZE    0x2A00000
+#define MSM_PMEM_ADSP_SIZE      0x0700000 */
 #define PMEM_KERNEL_EBI1_SIZE   0x600000
 
 #define PMIC_GPIO_INT		27
