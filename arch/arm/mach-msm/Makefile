@@ -140,6 +140,7 @@ obj-$(CONFIG_MACH_MSM8X55_FFA) += board-msm7x30.o
 obj-$(CONFIG_MACH_MSM8X55_SVLTE_FFA) += board-msm7x30.o 
 obj-$(CONFIG_MACH_MSM8X55_SVLTE_SURF) += board-msm7x30.o 
 
+obj-$(CONFIG_MACH_SEMC_ZEUS) += board-semc_zeus.o
 obj-$(CONFIG_MACH_SEMC_MOGAMI) += board-semc_mogami.o board-semc_mogami-rfkill.o keypad-mogami_cdb.o leds-mogami_cdb.o gpio-mogami_cdb.o charger-mogami_cdb.o board-semc_mogami-wifi.o
 obj-$(CONFIG_MACH_SEMC_ANZU) += board-semc_mogami.o board-semc_mogami-rfkill.o keypad-anzu.o leds-anzu.o gpio-anzu.o charger-anzu.o board-semc_mogami-wifi.o
 obj-$(CONFIG_MACH_SEMC_HALLON) += board-semc_mogami.o board-semc_mogami-rfkill.o keypad-hallon.o leds-hallon.o gpio-hallon.o charger-hallon.o fpc_test-hallon.o board-semc_mogami-wifi.o
@@ -154,6 +155,8 @@ obj-$(CONFIG_MACH_SEMC_HAIDA) += board-semc_mogami.o board-semc_mogami-rfkill.o 
 obj-$(CONFIG_MOGAMI_VIBRATOR) += vibrator-mogami.o
 
 obj-$(CONFIG_MACH_SEMC_PHOENIX) += board-semc_zeus.o keypad-zeus.o board-semc_zeus-wifi.o board-semc_zeus-rfkill.o
+obj-$(CONFIG_MACH_SEMC_ZEUS) += keypad-zeus.o
+obj-$(CONFIG_MACH_SEMC_ZEUS) += board-semc_zeus-wifi.o board-semc_zeus-rfkill.o
 
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire.o board-sapphire-gpio.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-keypad.o board-sapphire-panel.o

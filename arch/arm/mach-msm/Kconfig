@@ -176,6 +176,16 @@ config MACH_MSM7X30_FLUID
        help
          Support for the Qualcomm MSM7x30 FLUID eval board.
 
+config MACH_SEMC_ZEUS
+	depends on ARCH_MSM7X30
+	depends on !MSM_STACKED_MEMORY
+	select SUPPORT_ALIEN_USB_CHARGER
+	select USE_PMIC_CHARGING_ON_AMSS
+	default y
+	bool "SonyEricsson Zeus"
+	help
+	  Support for the SonyEricsson Zeus devices.
+
 config MACH_SEMC_MOGAMI
        depends on ARCH_MSM7X30
        depends on !MSM_STACKED_MEMORY
@@ -1116,6 +1126,13 @@ config MOGAMI_SLIDER
 	default n
 	help
 	  Select if GPIO slider switch is attached.
+
+config ZEUS_GPIO_KEYPAD
+        bool "Zeus GPIO keypad"
+        depends on INPUT_GPIO = "y"
+        default y
+        help
+          Select if the GPIO keypad is attached.
 
 config MOGAMI_VIBRATOR
 	bool "Mogami Vibrator"

@@ -22,7 +22,7 @@
 #include <linux/types.h>
 #include <linux/input.h>
 #include <linux/usb.h>
-#if defined(CONFIG_MACH_SEMC_ZEUS) || defined(CONFIG_MACH_SEMC_PHOENIX)
+#if defined(CONFIG_MACH_SEMC_ZEUS)
 #include <linux/leds.h>
 #endif /* CONFIG_MACH_SEMC_ZEUS */
 #include <linux/leds-pmic8058.h>
@@ -103,7 +103,7 @@ struct msm_camera_sensor_pwr {
 
 #define MSM_CAMERA_FLASH_SRC_PMIC (0x00000001<<0)
 #define MSM_CAMERA_FLASH_SRC_PWM  (0x00000001<<1)
-#if defined(CONFIG_MACH_SEMC_ZEUS) || defined(CONFIG_MACH_SEMC_PHOENIX)
+#if defined(CONFIG_MACH_SEMC_ZEUS)
 #define MSM_CAMERA_FLASH_SRC_LED  (0x00000001<<2)
 #endif /* CONFIG_MACH_SEMC_ZEUS */
 
@@ -130,7 +130,7 @@ struct msm_camera_sensor_flash_src {
 	union {
 		struct msm_camera_sensor_flash_pmic pmic_src;
 		struct msm_camera_sensor_flash_pwm pwm_src;
-#if defined(CONFIG_MACH_SEMC_ZEUS) || defined(CONFIG_MACH_SEMC_PHOENIX)
+#if defined(CONFIG_MACH_SEMC_ZEUS)
 		struct gpio_led_platform_data *gpio_led_src;
 #endif /* CONFIG_MACH_SEMC_ZEUS */
 	} _fsrc;
