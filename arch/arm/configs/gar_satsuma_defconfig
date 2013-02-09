@@ -3,7 +3,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.9
-# Sun Dec 23 19:01:01 2012
+# Sat Feb 09 23:25:12 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -227,6 +227,7 @@ CONFIG_MACH_SEMC_SATSUMA=y
 # CONFIG_MACH_SEMC_COCONUT is not set
 # CONFIG_MACH_SEMC_HAIDA is not set
 # CONFIG_MACH_SEMC_PHOENIX is not set
+# CONFIG_MACH_SEMC_ZEUS is not set
 # CONFIG_MACH_MSM8X55_SURF is not set
 # CONFIG_MACH_MSM8X55_FFA is not set
 # CONFIG_MACH_MSM8X55_SVLTE_FFA is not set
