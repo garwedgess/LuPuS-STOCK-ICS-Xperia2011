@@ -1,0 +1,789 @@
+#!/system/bin/sh
+
+# IMPORTANT
+### LuPuS v1 ###
+# Info has been taken from wikipedia pages, all credits to respected owners of any information / MODS used in this script, this script is inteneded for the purpose of LuPuS Kernel. To any users using this Ramdisk/Script give full credits to author, pointing to ramdisk and kernel menu ect ect. This is under GPL but with the time and effort spent full credits is EXPECTED.
+# Credits to DooMLoRD for some of his tweaks
+## wedgess ##
+
+
+check_version()
+{
+clear
+if [ -e /system/lupus.prop ]; then
+	recover_choice=`sbin/busybox cat /system/lupus.prop | /sbin/busybox grep "recovery.choice="`
+	echo ""
+	echo ""
+	echo "[*] Default $recover_choice"
+else
+	echo "[*] You have not yet changed recovery from the default CWM"
+fi
+sleep 4
+recovery_menu
+}
+
+
+create_prop_twrp()
+{
+mount -o remount rw /system
+
+if [ -e /system/lupus.prop ]; then
+	sed "s/recovery.choice=cwm/recovery.choice=twrp/" /system/lupus.prop > /system/1lupus.prop
+	mv /system/1lupus.prop /system/lupus.prop
+else
+echo "#" > /system/lupus.prop
+echo "# LuPuS KERNEL PROPERTIES" >> /system/lupus.prop
+echo "#" >> /system/lupus.prop
+echo "recovery.choice=twrp" >> /system/lupus.prop
+fi
+mount -o remount ro /system
+}
+
+create_prop_cwm()
+{
+mount -o remount rw /system
+
+if [ -e /system/lupus.prop ]; then
+	sed "s/recovery.choice=twrp/recovery.choice=cwm/" /system/lupus.prop > /system/1lupus.prop
+	mv /system/1lupus.prop /system/lupus.prop
+else
+echo "#" > /system/lupus.prop
+echo "# LuPuS KERNEL PROPERTIES" >> /system/lupus.prop
+echo "#" >> /system/lupus.prop
+echo "recovery.choice=cwm" >> /system/lupus.prop
+fi
+mount -o remount ro /system
+}
+
+
+
+CWM_choice()
+{
+# mount system as r/w
+mount -o remount rw /system
+echo ""
+echo "[CWM]"
+create_prop_cwm
+sleep 1
+echo "[*} CWM is set as default recovery"
+echo ""
+sleep 1
+echo "[Q] Reboot now (default = NO   y = reboot)"
+# mount as r/o
+mount -o remount ro /system
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+echo "[*] Rebooting ...."
+echo ""
+echo "   3"
+sleep 1
+echo "   2"
+sleep 1
+echo "   1"
+sleep 1
+reboot
+else
+echo "[*] Returning to menu"
+sleep 3
+fi
+}
+
+
+TWRP_choice()
+{
+# mount system as r/w
+mount -o remount rw /system
+echo ""
+echo "[TWRP]"
+create_prop_twrp
+sleep 1
+echo "[*} TWRP is set as default recovery"
+echo ""
+sleep 1
+echo "[Q] Reboot now (default = NO   y = reboot)"
+# mount as r/o
+mount -o remount ro /system
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+echo "[*] Rebooting ...."
+echo ""
+echo "   3"
+sleep 1
+echo "   2"
+sleep 1
+echo "   1"
+sleep 1
+reboot
+else
+echo "[*] Returning to menu"
+sleep 3
+fi
+}
+
+
+cifs_enable()
+{
+# mount system r/w
+mount -o remount rw /system
+echo "[CIFS] Enabling modules"
+sleep 2
+# copy cifs modules
+cp /res/cifs/cifs.ko /system/lib/modules
+cp /res/cifs/md4.ko /system/lib/modules/
+cp /res/cifs/nls_utf8.ko /system/lib/modules/
+echo "[*] Cifs enabled"
+sleep 3
+# unmount r/o
+mount -o remount ro /system
+}
+
+cifs_disable()
+{
+# mount system
+mount -o remount rw /system
+echo "[CIFS] Disabling modules"
+sleep 2
+# removes cifs modules
+rm /system/lib/modules/md4.ko
+rm /system/lib/modules/cifs.ko
+rm /system/lib/modules/nls_utf8.ko
+echo "[*] Cifs disabled"
+sleep 3
+# unmount r/o
+mount -o remount ro /system
+}
+
+
+
+markers()
+{
+# mount as r/w
+mount -o remount rw /system
+sleep 1
+su -c 'rm -r /data/local/tmp; mkdir /data/local/tmp; rm /system/lupus.prop'
+echo "[*] All markers removed"
+sleep 2
+# mount as r/o
+mount -o remount ro /system
+echo "[i] All marker files will be replaced on boot"
+sleep 2
+}
+
+
+
+clean()
+{
+echo "[CLEANING] Wait...."
+sleep 2
+mount -o remount rw /system
+# remove cache apps
+if [ -e /cache/*.apk ];then
+	 rm /cache/*.apk
+fi
+clear
+# remove cache temp
+if [ -e /cache/*.tmp ]; then
+	 rm -Rf /cache/*.tmp
+fi
+clear
+# remove dalvik-cache apps
+if [ -e /data/dalvik-cache/*.apk ]; then
+	 rm -Rf /data/dalvik-cache/*.apk
+fi
+clear
+# remove dalvik-cache temp
+if [ -e /data/dalvik-cache/*.tmp ]; then
+	 rm -Rf /data/dalvik-cache/*.tmp
+fi
+clear
+# remove usuage stats
+if [ -e /data/system/usagestats/* ]; then
+	 rm -Rf /data/system/usagestats/*
+fi
+clear
+# remove app usuage stats
+if [ -e /data/system/appusagestats/* ]; then
+	 rm -Rf /data/system/appusagestats/*
+fi
+clear
+# remove dropbox data content
+if [ -e /data/system/dropbox/* ]; then
+	 rm -Rf /data/system/dropbox/*
+fi
+clear
+# remove user behaviour
+if  [ -e /data/system/userbehavior.db ]; then
+   rm /data/system/userbehavior.db
+fi
+clear
+sleep 1
+# remove usuage stats
+if  [ -d /data/system/usagestats ]; then
+   chmod 0400 /data/system/usagestats
+fi
+# remove app usage stats
+if  [ -d /data/system/appusagestats ]; then
+   chmod 0400 /data/system/appusagestats
+fi
+mount -o remount ro /system
+clear
+echo "[CLEAN-UP] Complete..."
+sleep 3
+}
+
+
+LMK()
+{
+# lowmemorykiller tweaks
+echo ""
+echo "[LMK] Setting LowMemoryKiller tweaks"
+sleep 1
+echo "0,2,3,7,9,15" >> /sys/module/lowmemorykiller/parameters/adj
+echo "2560,3840,5120,8960,11520,14080" >> /sys/module/lowmemorykiller/parameters/minfree
+echo "32" >> /sys/module/lowmemorykiller/parameters/cost
+echo "0" >> /sys/module/lowmemorykiller/parameters/debug_level
+echo "[*] LowMemoryKiller tweaks set"
+echo ""
+echo "[*] ::NOTE:: tweaks will be reset after reboot"
+sleep 2
+echo "[Q] Do you want to set these tweaks at every boot"
+echo "    by creating an init.d script??"
+echo "(default = NO y = create init.d)"
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+mount -o remount rw /system
+echo "echo 0,2,3,7,9,15 >> /sys/module/lowmemorykiller/parameters/adj" >> /system/etc/init.d/01lmk
+echo "echo 2560,3840,5120,8960,11520,14080 >> /sys/module/lowmemorykiller/parameters/minfree" >> /system/etc/init.d/01lmk
+echo "echo 32 >> /sys/module/lowmemorykiller/parameters/cost" >> /system/etc/init.d/01lmk
+echo "echo 0 >> /sys/module/lowmemorykiller/parameters/debug_level" >> /system/etc/init.d/01lmk
+chmod 0755 /system/etc/init.d/01lmk
+mount -o remount ro /system
+echo "[*] Created 01lmk in init.d directory"
+sleep 1
+fi
+echo ""
+echo "[LMK] Complete.."
+sleep 3
+}
+
+
+
+KMT()
+{
+clear
+# Kernel memory tweak
+sleep 1
+sysctl -w vm.dirty_ratio=80
+sysctl -w vm.dirty_background_ratio=60
+sysctl -w vm.vfs_cache_pressure=30
+sysctl -w vm.oom_kill_allocating_task=0
+sysctl -w vm.min_free_kbytes=2048
+sysctl -w vm.dirty_expire_centisecs=2000
+sleep 1
+sysctl -w vm.dirty_writeback_centisecs=1000
+sysctl -w vm.panic_on_oom=0
+sysctl -w vm.overcommit_memory=1
+sysctl -w vm.overcommit_ratio=40
+sysctl -w vm.swappiness=20
+sysctl -w kernel.panic_on_oops=0
+sysctl -w kernel.panic=0
+sysctl -w kernel.random.read_wakeup_threshold=1366
+sleep 1
+echo ""
+echo "[MEMORY-TWEAKS] Complete..."
+sleep 3
+}
+
+
+NOP()
+{
+clear
+echo ""
+echo " [NETWORK-OPTIMIZATIONS] Applying..."
+sleep 1
+# Network optimization
+echo "2097152" >> /proc/sys/net/core/wmem_max
+echo "2097152" >> /proc/sys/net/core/rmem_max
+echo "20480" >> /proc/sys/net/core/optmem_max
+echo "1" >> /proc/sys/net/ipv4/tcp_moderate_rcvbuf
+echo "6144" >> /proc/sys/net/ipv4/udp_rmem_min
+echo "6144" >> /proc/sys/net/ipv4/udp_wmem_min
+echo "6144 87380 2097152" >> /proc/sys/net/ipv4/tcp_rmem
+echo "6144 87380 2097152" >> /proc/sys/net/ipv4/tcp_wmem
+sleep 2
+sysctl -w net.ipv4.tcp_timestamps=0
+sysctl -w net.ipv4.tcp_tw_reuse=1
+sysctl -w net.ipv4.tcp_tw_recycle=1
+sysctl -w net.ipv4.tcp_sack=1
+sysctl -w net.ipv4.tcp_window_scaling=1
+sysctl -w net.ipv4.tcp_keepalive_probes=5
+sysctl -w net.ipv4.tcp_keepalive_intvl=156
+sysctl -w net.ipv4.tcp_fin_timeout=30
+sysctl -w net.ipv4.tcp_ecn=0
+sleep 1
+sysctl -w net.ipv4.tcp_max_tw_buckets=360000
+sysctl -w net.ipv4.tcp_synack_retries=2
+sysctl -w net.ipv4.route.flush=1
+sysctl -w net.ipv4.icmp_echo_ignore_all=1
+sysctl -w net.core.wmem_max=524288
+sysctl -w net.core.rmem_max=524288
+sysctl -w net.core.rmem_default=110592
+sysctl -w net.core.wmem_default=110592
+echo ""
+echo "[NETWORK-OPTIMIZATIONS] Complete...."
+sleep 3
+}
+
+
+WIFI()
+{
+clear
+# Defend against arp spoofing
+echo "[WIFI] Defend against arp spoofing"
+sleep 2
+# Turn on Source Address Verification in all interfaces.
+echo "1" >> /proc/sys/net/ipv4/conf/all/rp_filter
+echo "1" >> /proc/sys/net/ipv4/conf/default/rp_filter
+# Do not accept ICMP redirects.
+echo "0" >> /proc/sys/net/ipv4/conf/all/accept_redirects
+echo "0" >> /proc/sys/net/ipv4/conf/default/accept_redirects
+# Do not send ICMP redirects.
+echo "0" >> /proc/sys/net/ipv4/conf/all/send_redirects
+echo "0" >> /proc/sys/net/ipv4/conf/default/send_redirects
+# Ignore ICMP broadcasts will stop gateway from responding to broadcast pings.
+echo "1" >> /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+# Ignore bogus ICMP errors.
+echo "1" >> /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+# Do not accept IP source route packets.
+echo "0" >> /proc/sys/net/ipv4/conf/all/accept_source_route
+echo "0" >> /proc/sys/net/ipv4/conf/default/accept_source_route
+# Turn on log Martian Packets with impossible addresses.
+echo "1" >> /proc/sys/net/ipv4/conf/all/log_martians
+echo "1" >> /proc/sys/net/ipv4/conf/default/log_martians
+sleep 1
+echo ""
+echo "[*] Complete...."
+sleep 2
+echo "[Q] Do you want to set these tweaks atevery boot"
+echo "    by creating an init.d script"
+echo "(default = NO y = create init.d)"
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+mount -o remount rw system
+# Turn on Source Address Verification in all interfaces.
+echo "echo 1 >> /proc/sys/net/ipv4/conf/all/rp_filter" >> /system/etc/init.d/00spoof
+echo "echo 1 >> /proc/sys/net/ipv4/conf/default/rp_filter" >> /system/etc/init.d/00spoof
+# Do not accept ICMP redirects.
+echo "echo 0 >> /proc/sys/net/ipv4/conf/all/accept_redirects" >> /system/etc/init.d/00spoof
+echo "echo 0 >> /proc/sys/net/ipv4/conf/default/accept_redirects" >> /system/etc/init.d/00spoof
+# Do not send ICMP redirects.
+echo "echo 0 >> /proc/sys/net/ipv4/conf/all/send_redirects" >> /system/etc/init.d/00spoof
+echo "echo 0 >> /proc/sys/net/ipv4/conf/default/send_redirects" >> /system/etc/init.d/00spoof
+# Ignore ICMP broadcasts will stop gateway from responding to broadcast pings.
+echo "echo 1 >> /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts" >> /system/etc/init.d/00spoof
+# Ignore bogus ICMP errors.
+echo "echo 1 >> /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses" >> /system/etc/init.d/00spoof
+# Do not accept IP source route packets.
+echo "echo 0 >> /proc/sys/net/ipv4/conf/all/accept_source_route" >> /system/etc/init.d/00spoof
+echo "echo 0 >> /proc/sys/net/ipv4/conf/default/accept_source_route" >> /system/etc/init.d/00spoof
+# Turn on log Martian Packets with impossible addresses.
+echo "echo 1 >> /proc/sys/net/ipv4/conf/all/log_martians" >> /system/etc/init.d/00spoof
+echo "echo 1 >> /proc/sys/net/ipv4/conf/default/log_martians" >> /system/etc/init.d/00spoof
+echo ""
+chmod 0755 /system/etc/init.d/00spoof
+mount -o remount ro /system
+echo "[*] Created 00spoof in init.d directory"
+sleep 2
+fi
+echo "[INIT.D] Defence against ARP spoofing set...."
+sleep 2
+}
+
+
+
+
+lazy_mode()
+{
+clear
+echo "[LAZY] Using all tweaks....."
+sleep 1
+clean
+LMK
+KMT
+NOP
+WIFI
+echo ""
+echo " [*] Complete..."
+sleep 2
+echo "[i] Remember all tweaks reset on boot"
+sleep 4
+tweak_menu
+}
+
+
+zram_enable()
+{
+# mount system as r/w
+mount -o remount rw /system
+echo ""
+echo "[ZRAM]"
+cp /res/zram/00zram /system/etc/init.d/
+sleep 1
+chmod 0755 /system/etc/init.d/00zram
+echo "[*] zRam enabled"
+echo "[*} zRam will not be enabled untill you reboot"
+echo ""
+sleep 1
+echo "[Q] Reboot now (default = NO   y = reboot)"
+# mount as r/o
+mount -o remount ro /system
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+echo "[*] Rebooting ...."
+echo ""
+echo "   3"
+sleep 1
+echo "   2"
+sleep 1
+echo "   1"
+sleep 1
+reboot
+else
+echo "[*] Returning to menu"
+sleep 3
+fi
+}
+
+zram_disable()
+{
+# mount system as r/w
+mount -o remount rw /system
+rm /system/etc/init.d/00zram
+echo ""
+echo "[*] zRam disabled"
+sleep 1
+echo "[i] zRam will not be disabled untill you reboot"
+echo ""
+sleep 1
+echo "[Q] Reboot now (default = NO   y = reboot)"
+# mount as r/o
+mount -o remount ro /system
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+echo "[*] Rebooting ...."
+echo ""
+echo "   3"
+sleep 1
+echo "   2"
+sleep 1
+echo "   1"
+sleep 1
+reboot
+else
+echo "[*] Returning to menu"
+sleep 3
+fi
+}
+
+zram_size()
+{
+# mount system r/w 
+mount -o remount rw /system
+echo ""
+echo "Enter size of zRam (eg) 30 = 30 MB"
+read ZRS
+# remove existing zram script
+if [ -f /system/ect/init.d/00zram ]; then
+rm /system/ect/init.d/00zram
+fi
+cp /res/zram/00zram /system/etc/init.d/
+sed "s/echo \$((.*\*1024\*1024)) > \/sys\/block\/zram0\/disksize/echo \$(($ZRS\*1024\*1024)) > \/sys\/block\/zram0\/disksize/" /system/etc/init.d/00zram > /system/etc/init.d/01zram
+mv /system/etc/init.d/01zram /system/etc/init.d/00zram
+chmod 0755 /system/etc/init.d/00zram
+clear
+echo "[*] zRam size set as $ZRS MB"
+echo ""
+sleep 2
+echo "[i] zRam size will not change untill you reboot"
+echo ""
+sleep 1
+echo "[Q] Reboot now (default = NO y = reboot)"
+# mount as r/o
+mount -o remount ro /system
+read reup
+if [[ $reup = 'y' ]] || [[ $reup = 'Y' ]]; then
+clear
+echo "[*] Rebooting ...."
+echo ""
+echo "   3"
+sleep 1
+echo "   2"
+sleep 1
+echo "   1"
+sleep 1
+reboot
+else
+echo "[*] Returning to menu"
+sleep 3
+fi
+}
+
+
+usb_otg_enable()
+{
+# mount system and create lupuslog
+mount -o remount rw /system
+echo "[USB-OTG] Enabling now" 
+sleep 2
+cp /res/usb_otg/* /system/lib/modules/
+echo "[*] USB-OTG enabled" 
+mount -o remount ro /system
+sleep 2
+}
+
+usb_otg_disable()
+{
+# mount system and create lupuslog
+mount -o remount rw /system
+echo "[USB-OTG] Disabling.."
+sleep 2
+rm /system/lib/modules/usb-storage.ko
+rm /system/lib/modules/fuse.ko
+rm /system/lib/modules/ntfs.ko
+echo "[*] USB-OTG disabled" 
+mount -o remount ro /system
+sleep 2
+}
+
+
+
+
+########## MENU'S ###########
+
+
+cifs_menu()
+{
+clear
+echo ""
+echo "    [CIFS INFO]"
+echo ""
+echo "Common Internet File System (CIFS) operates as an"
+echo "application-layer network protocol mainly used for"
+echo "providing shared access to files, printers,"
+echo "serial ports and miscellaneous communications"
+echo "between nodes on a network."
+echo ""
+echo ""
+echo "       Choose from the following??"
+echo ""
+echo "             1/ Enable"
+echo "             2/ Disable"
+echo "             R/ Return to main menu"
+read num
+case $num in
+	1) clear; cifs_enable;;
+	2) clear; cifs_disable;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; cifs_menu;
+esac
+}
+
+
+zram_menu()
+{
+clear
+echo ""
+echo "    [ZRAM INFO]"
+echo ""
+echo "zRam (AKA. Compache) increases performance by"
+echo "avoiding paging on disk and instead uses a compressed"
+echo "block device in RAM in which paging takes place until"
+echo "it is necessary to use the swap space on the hard"
+echo "disk drive. Since using RAM is faster than using"
+echo "disks, zRam allows Linux to make more use of RAM"
+echo "when swapping/paging is required."
+echo ""
+echo ""
+echo "        Choose from the following"
+echo ""
+echo ""
+echo "             1/ Enable"
+echo "             2/ Disable"
+echo "             3/ Set zRam size"
+echo "             R/ Return to main menu"
+read num
+case $num in
+	1) clear; zram_enable;;
+	2) clear; zram_disable;;
+	3) clear; zram_size;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; zram_menu;
+esac
+}
+
+
+usb_otg_menu()
+{
+clear
+echo ""
+echo "    [USB-OTG INFO]"
+echo ""
+echo "USB On-The-Go, is a specification that allows"
+echo "USB such as digital audio players or mobile phones"
+echo "to act as a host, allowing other USB devices"
+echo "like a USB flash drive, mouse, or keyboard to"
+echo "be attached to them. Unlike conventional USB"
+echo "systems, USB OTG systems can drop the hosting"
+echo "role and act as normal USB devices when attached"
+echo "to another host. This can be used to allow a" 
+echo "mobile phone to act as host for a flash drive"
+echo "and read its contents, downloading music for" 
+echo "instance, but then act as a flash drive when" 
+echo "plugged into a host computer and allow the "
+echo "host to read off the new content."
+echo ""
+echo " Do you want to Enable or Disable of USB-OTG??"
+echo ""
+echo "        1/ Enable"
+echo "        2/ Disable"
+echo "        R/ Return to main men"
+read num
+case $num in
+	1) clear; usb_otg_enable;;
+	2) clear; usb_otg_disable;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; usb_otg_menu;
+  esac
+}
+
+reset_markers()
+{
+clear
+echo ""
+echo "    [RESET]"
+echo ""
+echo "Removes all marker files which are created on boot"
+echo "for LuPuS Kernel, these include Wifi & Autoroot"
+echo "Markers. If you have a problem with either ROOT or"
+echo "WIFI it is recommended to wipe these. "
+echo ""
+echo ""
+echo "        Do you want to Wipe Marker files??"
+echo ""
+echo "            1/ Yes"
+echo "            R/ Return to main menu"
+read num
+case $num in
+	1) clear; markers; break;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; reset_markers;
+ esac
+}
+
+tweak_menu()
+{
+clear
+echo "       T W E A K     O P T I O N S "
+echo ""
+echo ""
+echo "  Choose from the following options-"
+echo "    :: Tweaks will reset at boot::"
+echo ""
+echo "   1/ Clean all tmp unused/ unneeded files"
+echo "   2/ Low Memory Killer Optimizations"
+echo "   3/ Kernel Memory Tweaks"
+echo "   4/ Network Optimizations"
+echo "   5/ Defend against ARP-Spoofing"
+echo "   6/ Lazy mode (Apply all tweaks)"
+echo ""
+echo "   R/ Return to menu"
+echo ""
+echo "    Enter option now:"
+read num
+case $num in
+	1) clear; clean ;;
+	2) clear; LMK ;;
+	3) clear; KMT ;;
+	4) clear; NOP ;;
+	5) clear; WIFI ;;
+	6) clear; lazy_mode ;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; tweak_menu;
+ esac
+}
+
+
+recovery_menu()
+{
+clear
+echo ""
+echo "    [RECOVERY INFO]"
+echo ""
+echo "This Option is used to select your choice of recovery"
+echo "Choose between TWRP Recovery (v2.4.1.0) which is a"
+echo "full touch supported recovery, with quick backups"
+echo "and restoring. Or the CWM recovery (v6.0.2.7)."
+echo "If no recovery is selected default is CWM."
+echo ""
+echo ""
+echo "        Choose from the following??"
+echo ""
+echo "            1/ TWRP"
+echo "            2/ CWM"
+echo "            3/ Check recovery"
+echo "            R/ Return to main menu"
+read num
+case $num in
+	1) clear; TWRP_choice;;
+	2) clear; CWM_choice;;
+	3) clear; check_version;;
+	r|R) clear; main_menu_opt;;
+	*) echo "$num is not a valid option"; sleep 3; clear; recovery_menu;
+esac
+}
+
+
+
+main_menu_opt()
+{
+clear
+echo "    L u P u S     K E R N E L     O P T I O N S "
+echo ""
+echo ""
+echo "	Choose from the following options-"
+echo ""
+echo ""
+echo "          1/ CIFS options"
+echo "          2/ Zram options"
+echo "          3/ USB-OTG options"
+echo "          4/ Reset options"
+echo "          5/ Tweak options"
+echo "          6/ Choose Recovery"
+echo ""
+echo "          Q/ Quit LuPuS script"
+echo ""
+echo "	   Enter option now:"
+echo ""
+read num
+case $num in
+	1) clear; cifs_menu;;
+	2) clear; zram_menu;;
+	3) clear; usb_otg_menu;;
+	4) clear; reset_markers;;
+	5) clear; tweak_menu;;
+	6) clear; recovery_menu;;
+	q|Q) clear; exit;;
+	*) echo "$num is not a valid option"; sleep 3; clear; main_menu_opt;
+esac
+}
+
+while :
+do
+	main_menu_opt
+done
