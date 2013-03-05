@@ -1,0 +1,15 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.opengles.version=131072
+persist.sys.usb.config=mtp,adb
+ro.secure=0
+ro.allow.mock.location=0
+ro.debuggable=1
+#
+# VERSION_PROPERTIES
+#
+ro.semc.version.sw=1246-7916
+ro.semc.version.sw_revision=4.1.B.0.431
+ro.semc.version.sw_variant=GENERIC
+ro.semc.version.sw_type=user
