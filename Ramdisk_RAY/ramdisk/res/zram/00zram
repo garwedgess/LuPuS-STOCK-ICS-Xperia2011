@@ -1,0 +1,6 @@
+#!/system/bin/sh
+
+echo $((60*1024*1024)) > /sys/block/zram0/disksize
+/system/xbin/mknod -m 600 /dev/zram0 b 253 0
+/system/xbin/mkswap /dev/zram0
+/system/xbin/swapon /dev/zram0

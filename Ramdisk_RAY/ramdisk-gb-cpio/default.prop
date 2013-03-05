@@ -1,0 +1,32 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.opengles.version=131072
+ro.secure=0
+ro.allow.mock.location=0
+ro.debuggable=1
+persist.service.adb.enable=1
+#
+# VERSION_PROPERTIES
+#
+ro.semc.version.sw=1248-9545
+ro.semc.version.sw_revision=4.0.2.A.0.58
+ro.semc.version.sw_variant=GENERIC
+ro.semc.version.sw_type=user
