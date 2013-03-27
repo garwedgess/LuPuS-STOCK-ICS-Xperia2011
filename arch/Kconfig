@@ -59,6 +59,7 @@ config KPROBES
 
 config HAVE_EFFICIENT_UNALIGNED_ACCESS
 	bool
+	def_bool y
 	help
 	  Some architectures are unable to perform unaligned accesses
 	  without the use of get_unaligned/put_unaligned. Others are

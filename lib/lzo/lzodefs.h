@@ -11,9 +11,13 @@
  *  Richard Purdie <rpurdie@openedhand.com>
  */
 
-
+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+#define COPY4(dst, src)	\
+		* (u32 *) (void *) (dst) = * (const u32 *) (const void *) (src)
+#else
 #define COPY4(dst, src)	\
 		put_unaligned(get_unaligned((const u32 *)(src)), (u32 *)(dst))
+#endif
 #if defined(__x86_64__)
 #define COPY8(dst, src)	\
 		put_unaligned(get_unaligned((const u64 *)(src)), (u64 *)(dst))
