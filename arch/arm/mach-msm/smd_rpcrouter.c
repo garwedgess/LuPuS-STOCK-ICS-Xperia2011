@@ -1624,7 +1624,7 @@ int msm_rpc_call_reply(struct msm_rpc_endpoint *ept, uint32_t proc,
 		       long timeout)
 {
 	struct rpc_request_hdr *req = _request;
-	struct rpc_reply_hdr *reply;
+	struct rpc_reply_hdr *reply = NULL;
 	int rc;
 
 	if (request_size < sizeof(*req))
