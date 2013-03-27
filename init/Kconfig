@@ -418,7 +418,7 @@ config IKCONFIG_PROC
 config LOG_BUF_SHIFT
 	int "Kernel log buffer size (16 => 64KB, 17 => 128KB)"
 	range 12 21
-	default 17
+	default 15
 	help
 	  Select kernel log buffer size as a power of 2.
 	  Examples:
@@ -733,7 +733,7 @@ endif
 
 config CC_OPTIMIZE_FOR_SIZE
 	bool "Optimize for size"
-	default y
+	default n
 	help
 	  Enabling this option will pass "-Os" instead of "-O2" to gcc
 	  resulting in a smaller kernel.
@@ -793,7 +793,7 @@ config KALLSYMS
 
 config KALLSYMS_ALL
 	bool "Include all symbols in kallsyms"
-	depends on DEBUG_KERNEL && KALLSYMS
+	depends on KALLSYMS
 	help
 	   Normally kallsyms only contains the symbols of functions, for nicer
 	   OOPS messages.  Some debuggers can use kallsyms for other
