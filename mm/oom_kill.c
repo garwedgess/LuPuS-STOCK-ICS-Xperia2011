@@ -52,6 +52,26 @@ static int has_intersects_mems_allowed(struct task_struct *tsk)
 }
 
 /**
+ * The process p may have detached its own ->mm while exiting or through
+ * use_mm(), but one or more of its subthreads may still have a valid
+ * pointer.  Return p, or any of its subthreads with a valid ->mm, with
+ * task_lock() held.
+ */
+
+struct task_struct *find_lock_task_mm(struct task_struct *p)
+{
+	struct task_struct *t = p;
+	do {
+                 task_lock(t);
+                 if (likely(t->mm))
+                         return t;
+                 task_unlock(t);
+         } while_each_thread(p, t);
+ 
+         return NULL;
+}
+
+/**
  * badness - calculate a numeric value for how bad this task has been
  * @p: task struct of which task we should calculate
  * @uptime: current uptime in seconds
