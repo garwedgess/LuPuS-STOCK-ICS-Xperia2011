@@ -3347,6 +3347,31 @@ static int __init bt_addr_proc_init(void)
 	return 0;
 }
 
+#ifdef CONFIG_INPUT_KEYRESET
+#include <linux/keyreset.h>
+/* keyreset platform device */
+static int zeus_reset_keys_up[] = {
+       KEY_VOLUMEDOWN,
+       0 
+};
+
+static struct keyreset_platform_data zeus_reset_keys_pdata = {
+       .keys_up = zeus_reset_keys_up,
+       .keys_down = {
+               KEY_POWER,
+               KEY_HOME,
+               0
+       },
+};
+
+struct platform_device zeus_reset_keys_device = {
+       .name = KEYRESET_NAME,
+       .dev    = {
+               .platform_data = &zeus_reset_keys_pdata,
+       },
+};
+#endif  
+
 static void __init msm7x30_init(void)
 {
 	zeus_detect_product();
@@ -3377,6 +3402,9 @@ static void __init msm7x30_init(void)
 				  ARRAY_SIZE(hsusb_chg_supplied_to));
 	msm7x30_init_mmc();
 	msm_qsd_spi_init();
+    #ifdef CONFIG_INPUT_KEYRESET
+	platform_device_register(&zeus_reset_keys_device);
+    #endif 
 	msm_fb_add_devices();
 	spi_register_board_info(msm_spi_board_info,
 				ARRAY_SIZE(msm_spi_board_info));
