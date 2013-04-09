@@ -112,7 +112,14 @@
 #define NOVATEK_GPIO_RESET			157
 
 #define MSM_PMEM_SF_SIZE	0x1E00000
-#define MSM_FB_SIZE		0x500000
+
+// Triple Buffer Support
+#ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
+#define MSM_FB_SIZE		(864 * 480 * 4 * 3)
+#else
+#define MSM_FB_SIZE		(864 * 480 * 4 * 2)
+#endif
+
 #define MSM_GPU_PHYS_SIZE       SZ_4M
 //           720p Recording         
 #define MSM_PMEM_CAMERA_SIZE 0x2000000
