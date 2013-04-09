@@ -57,6 +57,7 @@ extern int load_565rle_image(char *filename);
 static unsigned char *fbram;
 static unsigned char *fbram_phys;
 static int fbram_size;
+static bool align_buffer = false;
 
 static struct platform_device *pdev_list[MSM_FB_MAX_DEV_LIST];
 static int pdev_list_cnt;
@@ -685,6 +686,11 @@ int calc_fb_offset(struct msm_fb_data_type *mfd, struct fb_info *fbi, int bpp)
 {
 	struct msm_panel_info *panel_info = &mfd->panel_info;
 	int remainder, yres, offset;
+
+    if (!align_buffer)
+    {
+        return fbi->var.xoffset * bpp + fbi->var.yoffset * fbi->fix.line_length;
+    }
 
 	if (panel_info->mode2_yres != 0) {
 		yres = panel_info->mode2_yres;
@@ -3049,5 +3055,7 @@ int __init msm_fb_init(void)
 
 	return 0;
 }
+
+module_param(align_buffer, bool, 0644);
 
 module_init(msm_fb_init);
