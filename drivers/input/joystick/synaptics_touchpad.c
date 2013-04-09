@@ -42,8 +42,10 @@
 
 #undef DEBUG
 
+#define SYNAPTICS_FINGER_DATA_SIZE    5
 #define SYNAPTICS_MAX_N_FINGERS 10
-#define SYNAPTICS_FINGER_OFF(n,x) ((((n) / 4) + !!(n % 4)) + 5 * (x))
+#define SYNAPTICS_FINGER_OFF(n, x) \
+    ((((n) / 4) + !!(n % 4)) + SYNAPTICS_FINGER_DATA_SIZE * (x))
 #define SYNAPTICS_REG_MAX SYNAPTICS_FINGER_OFF(SYNAPTICS_MAX_N_FINGERS, SYNAPTICS_MAX_N_FINGERS)
 
 #define SYNAPTICS_N_FUNCTIONS 3
@@ -261,7 +263,7 @@ static void synaptics_touchpad_set_irq(struct synaptics_touchpad *dd,
 		enable_irq(dd->i2c->irq);
 	} else if (!mask && dd->irq_count) {
 		dev_dbg(&dd->i2c->dev, "%s: disabling IRQ\n", __func__);
-		disable_irq(dd->i2c->irq);
+		disable_irq_nosync(dd->i2c->irq);
 	}
 	dd->irq_count = mask;
 }
@@ -751,7 +753,7 @@ static int synaptics_touchpad_flash(struct synaptics_touchpad *this)
 	case SYN_STATE_FLASH_DISABLE:
 		rc = synaptics_flash_verify(this);
 		break;
-	case SYN_STATE_DISABLED:
+	default:
 		break;
 	}
 
@@ -806,7 +808,7 @@ static int synaptics_touchpad_set_power(struct synaptics_touchpad *this)
 			dev_err(&this->i2c->dev,
 				"%s: failed to reset\n", __func__);
 
-		msleep(10);
+		usleep(10000);
 		this->active |= SYN_ACTIVE_POWER;
 
 	} else if (!should_wake && (active & SYN_ACTIVE_POWER)) {
@@ -1012,6 +1014,8 @@ static int synaptics_touchpad_device_open(struct input_dev *dev)
 {
 	struct synaptics_touchpad *this = input_get_drvdata(dev);
 
+	    if (this->state == SYN_STATE_INIT)
+		return 0;	
 	if (this->state == SYN_STATE_DISABLED)
 		return -ENODEV;
 	if (this->state != SYN_STATE_RUNNING)
