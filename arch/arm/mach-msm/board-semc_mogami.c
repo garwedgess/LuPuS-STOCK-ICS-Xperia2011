@@ -179,11 +179,12 @@
 #define MSM_RAM_CONSOLE_SIZE    (128 * SZ_1K)
 #endif
 
-#define MSM_PMEM_SF_SIZE	0x1E00000
+#define MSM_PMEM_SF_SIZE	0x1600000
+
 #ifdef CONFIG_FB_MSM_HDMI_SII9024A_PANEL
-#define MSM_FB_SIZE             0x530000
+#define MSM_HDMI_SIZE           0x30000
 #else
-#define MSM_FB_SIZE		0x500000
+#define MSM_HDMI_SIZE           0
 #endif /* CONFIG_FB_MSM_HDMI_SII9024A_PANEL */
 
 // Triple Buffer Support
@@ -195,8 +196,8 @@
 
 #define MSM_GPU_PHYS_SIZE       SZ_4M
 // Old values
-//#define MSM_PMEM_CAMERA_SIZE    0x3000000
-//#define MSM_PMEM_ADSP_SIZE      0x1000000
+//#define MSM_PMEM_CAMERA_SIZE    0x0000000
+//#define MSM_PMEM_ADSP_SIZE      0x2F00000
 // free 11mb ram
 #define MSM_PMEM_CAMERA_SIZE    0x2D00000
 #define MSM_PMEM_ADSP_SIZE      0xA00000
