@@ -182,9 +182,9 @@
 #define MSM_PMEM_SF_SIZE	0x1600000
 
 #ifdef CONFIG_FB_MSM_HDMI_SII9024A_PANEL
-#define MSM_HDMI_SIZE           0x30000
+#define MSM_FB_SIZE             0x530000
 #else
-#define MSM_HDMI_SIZE           0
+#define MSM_FB_SIZE		0x500000
 #endif /* CONFIG_FB_MSM_HDMI_SII9024A_PANEL */
 
 // Triple Buffer Support
