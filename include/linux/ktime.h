@@ -264,6 +264,11 @@ static inline struct timeval ktime_to_timeval(const ktime_t kt)
 		.tv_usec = (suseconds_t) (kt.tv.nsec / NSEC_PER_USEC) };
 }
 
+static inline s64 ktime_to_ms(const ktime_t kt)
+{         struct timeval tv = ktime_to_timeval(kt);
+         return (s64) tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
+}
+
 /**
  * ktime_to_ns - convert a ktime_t variable to scalar nanoseconds
  * @kt:		the ktime_t variable to convert

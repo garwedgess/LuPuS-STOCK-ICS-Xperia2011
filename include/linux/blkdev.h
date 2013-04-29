@@ -336,6 +336,7 @@ struct request_queue
 	struct request_list	rq;
 
 	request_fn_proc		*request_fn;
+	request_fn_proc    *urgent_request_fn;
 	make_request_fn		*make_request_fn;
 	prep_rq_fn		*prep_rq_fn;
 	unplug_fn		*unplug_fn;
@@ -415,6 +416,8 @@ struct request_queue
 	struct list_head	timeout_list;
 
 	struct queue_limits	limits;
+	bool      notified_urgent;
+	bool      dispatched_urgent;
 
 	/*
 	 * sg stuff
@@ -921,6 +924,7 @@ extern void blk_abort_queue(struct request_queue *);
 extern struct request_queue *blk_init_queue_node(request_fn_proc *rfn,
 					spinlock_t *lock, int node_id);
 extern struct request_queue *blk_init_queue(request_fn_proc *, spinlock_t *);
+extern void blk_urgent_request(struct request_queue *q, request_fn_proc *fn);
 extern void blk_cleanup_queue(struct request_queue *);
 extern void blk_queue_make_request(struct request_queue *, make_request_fn *);
 extern void blk_queue_bounce_limit(struct request_queue *, u64);
