@@ -463,9 +463,9 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-# Custom Partition layout
-CONFIG_CMDLINE="console=ttyMSM2,115200n8 androidboot.hardware=semc mtdparts=msm_nand:286720k@94720k(system),654848k@381440k(userdata),8192k@1036288k(cache),12800k@81920k(boot)"
-# Normal Partition layout
+# Custom Partitions
+CONFIG_CMDLINE="console=ttyMSM2,115200n8 androidboot.hardware=semc mtdparts=msm_nand:317440k@94720k(system),624128k@412160k(userdata),8192k@1036288k(cache),12800k@81920k(boot)" 
+# Stock Partitions
 # CONFIG_CMDLINE="console=ttyMSM2,115200n8 androidboot.hardware=semc"
 # CONFIG_XIP_KERNEL is not set
 # CONFIG_KEXEC is not set
