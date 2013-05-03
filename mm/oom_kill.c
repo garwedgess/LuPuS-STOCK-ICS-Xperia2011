@@ -27,8 +27,8 @@
 #include <linux/notifier.h>
 #include <linux/memcontrol.h>
 #include <linux/security.h>
-#include <linux/freezer.h>
 #include <linux/ratelimit.h>
+
 
 int sysctl_panic_on_oom;
 int sysctl_oom_kill_allocating_task;
@@ -279,11 +279,8 @@ static struct task_struct *select_bad_process(unsigned long *ppoints,
 		 * blocked waiting for another task which itself is waiting
 		 * for memory. Is there a better alternative?
 		 */
-		if (test_tsk_thread_flag(p, TIF_MEMDIE)) {
- 			if (unlikely(frozen(p)))
-				__thaw_task(p);
+		if (test_tsk_thread_flag(p, TIF_MEMDIE))
 			return ERR_PTR(-1UL);
-		}
 
 		/*
 		 * This is in the process of releasing memory so wait for it
