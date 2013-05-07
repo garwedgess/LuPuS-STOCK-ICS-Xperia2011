@@ -20,7 +20,11 @@
 #include <linux/reboot.h>
 #include <linux/sched.h>
 #include <linux/syscalls.h>
+#include <linux/sysfs.h>
 
+static int enable_reset = 0;
+
+static int init_kobject(void);
 
 struct keyreset_state {
 	struct input_handler input_handler;
@@ -57,6 +61,9 @@ static void keyreset_event(struct input_handle *handle, unsigned int type,
 		return;
 
 	if (!test_bit(code, state->keybit))
+		return;
+
+	if (!enable_reset)
 		return;
 
 	spin_lock_irqsave(&state->lock, flags);
@@ -217,6 +224,7 @@ struct platform_driver keyreset_driver = {
 
 static int __init keyreset_init(void)
 {
+	init_kobject();	
 	return platform_driver_register(&keyreset_driver);
 }
 
@@ -224,6 +232,45 @@ static void __exit keyreset_exit(void)
 {
 	return platform_driver_unregister(&keyreset_driver);
 }
+
+static ssize_t er_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+  return sprintf(buf, "%d\n", enable_reset);
+}
+
+static ssize_t er_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+{
+  sscanf(buf, "%du", &enable_reset);
+  if (enable_reset)
+    printk("KEYRESET - Enabled\n");
+  else
+    printk("KEYRESET - Disabled\n");
+
+return count;
+}
+
+static int init_kobject(void)
+{
+
+int retval;
+static struct kobj_attribute ad_attribute = __ATTR(enable_reset, 0666, er_show, er_store); 
+static struct attribute *attrs[] = { &ad_attribute.attr, NULL, }; 
+static struct attribute_group attr_group = {
+        .attrs = attrs,    
+ };
+
+static struct kobject *er_kobj; 
+
+er_kobj = kobject_create_and_add("keyreset", power_kobj);
+  if (!er_kobj) 
+    return -ENOMEM;
+
+  retval = sysfs_create_group(er_kobj, &attr_group);
+  if (retval)
+    kobject_put(er_kobj);
+  return retval;
+}
+
 
 module_init(keyreset_init);
 module_exit(keyreset_exit);
