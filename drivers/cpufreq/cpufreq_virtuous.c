@@ -62,14 +62,14 @@ static unsigned int suspended;
  * The minimum amount of time to spend at a frequency before we can ramp down,
  * default is 45ms.
  */
-#define DEFAULT_DOWN_RATE_US 20000
+#define DEFAULT_DOWN_RATE_US 48000
 static unsigned long down_rate_us;
 
 /*
  * When ramping up frequency with no idle cycles jump to at least this frequency.
  * Zero disables. Set a very high value to jump to policy max freqeuncy.
  */
-#define DEFAULT_UP_MIN_FREQ 998400
+#define DEFAULT_UP_MIN_FREQ 921600
 static unsigned int up_min_freq;
 
 /*
@@ -78,7 +78,7 @@ static unsigned int up_min_freq;
  * to minimize wakeup issues.
  * Set sleep_max_freq=0 to disable this behavior.
  */
-#define DEFAULT_SLEEP_MAX_FREQ 245000
+#define DEFAULT_SLEEP_MAX_FREQ 249600
 static unsigned int sleep_max_freq;
 
 /*
@@ -91,13 +91,13 @@ static unsigned int sample_rate_jiffies;
  * Freqeuncy delta when ramping up.
  * zero disables causes to always jump straight to max frequency.
  */
-#define DEFAULT_RAMP_UP_STEP 614400
+#define DEFAULT_RAMP_UP_STEP 100000
 static unsigned int ramp_up_step;
 
 /*
  * Max freqeuncy delta when ramping down. zero disables.
  */
-#define DEFAULT_MAX_RAMP_DOWN 384000
+#define DEFAULT_MAX_RAMP_DOWN 200000
 static unsigned int max_ramp_down;
 
 /*
