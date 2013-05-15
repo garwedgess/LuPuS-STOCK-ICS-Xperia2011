@@ -82,7 +82,7 @@ static unsigned long up_sample_time;
 /*
  * The minimum amount of time to spend at a frequency before we can step down.
  */
-#define DEFAULT_DOWN_SAMPLE_TIME 49000
+#define DEFAULT_DOWN_SAMPLE_TIME 48000
 static unsigned long down_sample_time;
 
 /*
