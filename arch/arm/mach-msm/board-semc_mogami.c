@@ -192,9 +192,6 @@
 // 720p -- free 15mb ram
 #define MSM_PMEM_CAMERA_SIZE    0x2B00000
 #define MSM_PMEM_ADSP_SIZE      0x900000
-// 480p Recording -- untested
-/*#define MSM_PMEM_CAMERA_SIZE    0x1F00000
-#define MSM_PMEM_ADSP_SIZE      0x0700000*/
 #define PMEM_KERNEL_EBI1_SIZE   0x600000
 
 #define PMIC_GPIO_INT		27
