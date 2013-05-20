@@ -2,7 +2,7 @@
 #define __CSNAPPY_H__
 /*
 File modified for the Linux Kernel by
-Zeev Tarantov <zeev.tarantov at gmail.com>
+Zeev Tarantov <zeev.tarantov@gmail.com>
 */
 #ifdef __cplusplus
 extern "C" {
@@ -12,6 +12,10 @@ extern "C" {
 
 #define CSNAPPY_WORKMEM_BYTES_POWER_OF_TWO 15
 #define CSNAPPY_WORKMEM_BYTES (1 << CSNAPPY_WORKMEM_BYTES_POWER_OF_TWO)
+
+#ifndef __GNUC__
+#define __attribute__(x) /*NOTHING*/
+#endif
 
 /*
  * Returns the maximal size of the compressed representation of
@@ -81,7 +85,7 @@ csnappy_get_uncompressed_length(
  * entire compressed stream (with header) into array "dst" of size "dst_len".
  * REQUIRES: dst_len is at least csnappy_get_uncompressed_length(...).
  *
- * Iff sucessful, returns CSNAPPY_E_OK.
+ * Iff successful, returns CSNAPPY_E_OK.
  * If recorded length in header is greater than dst_len, returns
  *  CSNAPPY_E_OUTPUT_INSUF.
  * If compressed data is malformed, does not write more than dst_len into dst.
@@ -99,7 +103,7 @@ csnappy_decompress(
  * If compressed stream needs more space, it will not overflow and return
  *  CSNAPPY_E_OUTPUT_OVERRUN.
  * On success, sets *dst_len to actal number of bytes decompressed.
- * Iff sucessful, returns CSNAPPY_E_OK.
+ * Iff successful, returns CSNAPPY_E_OK.
  */
 int
 csnappy_decompress_noheader(

@@ -1,3 +1,5 @@
+ccflags-y := -std=gnu99
+
 snappy_compress-objs := csnappy_compress.o
 snappy_decompress-objs := csnappy_decompress.o
 
