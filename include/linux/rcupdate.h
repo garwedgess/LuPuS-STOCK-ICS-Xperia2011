@@ -68,7 +68,7 @@ extern int rcu_scheduler_active;
 
 #if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU)
 #include <linux/rcutree.h>
-#elif defined(CONFIG_TINY_RCU)
+#elif CONFIG_TINY_RCU
 #include <linux/rcutiny.h>
 #else
 #error "Unknown RCU implementation specified to kernel configuration"
@@ -365,6 +365,14 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
 			smp_wmb(); \
 		(p) = (v); \
 	})
+
+#define rcu_assign_pointer_nonull(p, v) \
+	({ \
+		if (!__builtin_constant_p(v)) \
+		    smp_wmb(); \
+		(p) = (v); \
+	})
+ 
 
 /* Infrastructure to implement the synchronize_() primitives. */
 
