@@ -536,7 +536,7 @@ EXPORT_SYMBOL(nf_nat_protocol_register);
 void nf_nat_protocol_unregister(const struct nf_nat_protocol *proto)
 {
 	spin_lock_bh(&nf_nat_lock);
-	rcu_assign_pointer(nf_nat_protos[proto->protonum],
+	rcu_assign_pointer_nonull(nf_nat_protos[proto->protonum],
 			   &nf_nat_unknown_protocol);
 	spin_unlock_bh(&nf_nat_lock);
 	synchronize_rcu();
