@@ -191,8 +191,7 @@ static unsigned long move_vma(struct vm_area_struct *vma,
 	 * pages recently unmapped.  But leave vma->vm_flags as it was,
 	 * so KSM can come around to merge on vma and new_vma afterwards.
 	 */
-	err = ksm_madvise(vma, old_addr, old_addr + old_len,
-						MADV_UNMERGEABLE, &vm_flags);
+	err = unmerge_ksm_pages(vma, old_addr, old_addr + old_len);
 	if (err)
 		return err;
 

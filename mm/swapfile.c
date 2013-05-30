@@ -29,6 +29,7 @@
 #include <linux/capability.h>
 #include <linux/syscalls.h>
 #include <linux/memcontrol.h>
+#include <linux/ksm.h>
 
 #include <asm/pgtable.h>
 #include <asm/tlbflush.h>
@@ -663,6 +664,8 @@ int reuse_swap_page(struct page *page)
 	int count;
 
 	VM_BUG_ON(!PageLocked(page));
+	if (unlikely(PageKsm(page)))
+		return 0;
 	count = page_mapcount(page);
 	if (count <= 1 && PageSwapCache(page)) {
 		count += page_swapcount(page);
@@ -671,7 +674,7 @@ int reuse_swap_page(struct page *page)
 			SetPageDirty(page);
 		}
 	}
-	return count == 1;
+	return count <= 1;
 }
 
 /*
@@ -1217,7 +1220,13 @@ static int try_to_unuse(unsigned int type)
 		 * read from disk into another page.  Splitting into two
 		 * pages would be incorrect if swap supported "shared
 		 * private" pages, but they are handled by tmpfs files.
-		 */
+		 *
+		 * Given how unuse_vma() targets one particular offset
+		 * in an anon_vma, once the anon_vma has been determined,
+		 * this splitting happens to be just what is needed to
+		 * handle where KSM pages have been swapped out: re-reading
+		 * is unnecessarily slow, but we can fix that later on.
+ 		 */
 		if (swap_count(*swap_map) &&
 		     PageDirty(page) && PageSwapCache(page)) {
 			struct writeback_control wbc = {

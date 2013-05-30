@@ -26,6 +26,9 @@
  */
 struct anon_vma {
 	spinlock_t lock;	/* Serialize access to vma list */
+#ifdef CONFIG_KSM
+	atomic_t ksm_refcount;
+#endif
 	/*
 	 * NOTE: the LSB of the head.next is set by
 	 * mm_take_all_locks() _after_ taking the above lock. So the
@@ -46,6 +49,27 @@ static inline struct anon_vma *page_anon_vma(struct page *page)
 		return NULL;
 	return page_rmapping(page);
 }
+
+#ifdef CONFIG_KSM
+static inline void ksm_refcount_init(struct anon_vma *anon_vma)
+{
+	atomic_set(&anon_vma->ksm_refcount, 0);
+}
+
+static inline int ksm_refcount(struct anon_vma *anon_vma)
+{
+	return atomic_read(&anon_vma->ksm_refcount);
+}
+#else
+static inline void ksm_refcount_init(struct anon_vma *anon_vma)
+{
+}
+
+static inline int ksm_refcount(struct anon_vma *anon_vma)
+{
+	return 0;
+}
+#endif /* CONFIG_KSM */
 
 static inline void anon_vma_lock(struct vm_area_struct *vma)
 {
@@ -70,6 +94,7 @@ void __anon_vma_merge(struct vm_area_struct *, struct vm_area_struct *);
 void anon_vma_unlink(struct vm_area_struct *);
 void anon_vma_link(struct vm_area_struct *);
 void __anon_vma_link(struct vm_area_struct *);
+void anon_vma_free(struct anon_vma *);
 
 /*
  * rmap interfaces called when adding or removing pte of page
@@ -89,6 +114,9 @@ static inline void page_dup_rmap(struct page *page)
  */
 int page_referenced(struct page *, int is_locked,
 			struct mem_cgroup *cnt, unsigned long *vm_flags);
+int page_referenced_one(struct page *, struct vm_area_struct *,
+	unsigned long address, unsigned int *mapcount, unsigned long *vm_flags);
+
 enum ttu_flags {
 	TTU_UNMAP = 0,			/* unmap mode */
 	TTU_MIGRATION = 1,		/* migration mode */
@@ -102,6 +130,9 @@ enum ttu_flags {
 #define TTU_ACTION(x) ((x) & TTU_ACTION_MASK)
 
 int try_to_unmap(struct page *, enum ttu_flags flags);
+int try_to_unmap_one(struct page *, struct vm_area_struct *,
+			unsigned long address, enum ttu_flags flags);
+
 
 /*
  * Called from mm/filemap_xip.c to unmap empty zero page

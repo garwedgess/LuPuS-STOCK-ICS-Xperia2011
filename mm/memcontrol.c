@@ -1747,7 +1747,7 @@ int mem_cgroup_try_charge_swapin(struct mm_struct *mm,
 	 * to go on to do_swap_page()'s pte_same() test, which should fail.
 	 */
 	if (!PageSwapCache(page))
-		return 0;
+		goto charge_cur_mm;
 	mem = try_get_mem_cgroup_from_swapcache(page);
 	if (!mem)
 		goto charge_cur_mm;
