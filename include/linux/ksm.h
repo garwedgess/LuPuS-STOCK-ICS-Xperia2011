@@ -45,10 +45,10 @@ static inline void set_page_stable_node(struct page *page,
 }
 
 /* must be done before linked to mm */
-extern inline void ksm_vma_add_new(struct vm_area_struct *vma);
+extern void ksm_vma_add_new(struct vm_area_struct *vma);
 
 extern void ksm_remove_vma(struct vm_area_struct *vma);
-extern inline int unmerge_ksm_pages(struct vm_area_struct *vma,
+extern int unmerge_ksm_pages(struct vm_area_struct *vma,
 				    unsigned long start, unsigned long end);
 
 /*

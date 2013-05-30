@@ -4995,7 +4995,7 @@ static int __init ksm_init(void)
 		kthread_stop(ksm_thread);
 		goto out_free;
 	}
-
+	ksm_run = KSM_RUN_STOP;
 #else
 	ksm_run = KSM_RUN_MERGE;	/* no way for user to start it */
 
