@@ -198,10 +198,10 @@ static unsigned long ksm_pages_unshared;
  * Number of pages ksmd should scan in one batch. This is the top speed for
  * richly duplicated areas.
  */
-static unsigned long ksm_scan_batch_pages = 60000;
+static unsigned long ksm_scan_batch_pages = 15000;
 
 /* Milliseconds ksmd should sleep between batches */
-static unsigned int ksm_sleep_jiffies = 2;
+static unsigned int ksm_sleep_jiffies = 6;
 
 /*
  * The threshold used to filter out thrashing areas,
@@ -261,7 +261,7 @@ static u64 ksm_sleep_times;
 
 #define KSM_RUN_STOP	0
 #define KSM_RUN_MERGE	1
-static unsigned int ksm_run = KSM_RUN_MERGE;
+static unsigned int ksm_run = KSM_RUN_STOP;
 
 static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
 static DEFINE_MUTEX(ksm_thread_mutex);
@@ -4116,7 +4116,7 @@ static void ksm_enter_all_slots(void)
 static int ksm_scan_thread(void *nothing)
 {
 	set_freezable();
-	set_user_nice(current, 5);
+	set_user_nice(current, 12);
 
 	while (!kthread_should_stop()) {
 		mutex_lock(&ksm_thread_mutex);
@@ -4830,7 +4830,6 @@ static int __init ksm_init(void)
 		kthread_stop(ksm_thread);
 		goto out_free;
 	}
-	ksm_run = KSM_RUN_STOP;
 #else
 	ksm_run = KSM_RUN_MERGE;	/* no way for user to start it */
 
