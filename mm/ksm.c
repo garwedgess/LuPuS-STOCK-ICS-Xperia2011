@@ -81,35 +81,9 @@
 #include <linux/math64.h>
 #include <linux/gcd.h>
 #include <linux/freezer.h>
-#include <linux/in.h>
-#include <linux/ip.h>
-#include <linux/udp.h>
 
 #include <asm/tlbflush.h>
 #include "internal.h"
-
-#define USR_SPT_MAGIC_LEN 16
-#define USR_SPT_STR_LEN 32
-#define UKSM_USR_SPT_PORT 52013
-#define UKSM_USR_SPT_INTVL_MSEC 120000
-
-#define  UKSM_USR_SPT_NO_FROM	1
-
-struct uksm_usr_spt_s {
-	char magic[16];
-	u32 randid;
-	unsigned char flags;
-	char usr_str[32];
-} __attribute__ ((packed));
-
-static struct uksm_usr_spt_s uksm_usr_spt = {
-	.magic = "UKSM_USR_SPT_OK1",
-	.usr_str = "none",
-};
-static struct sockaddr_in uksm_usr_spt_addr;
-static struct socket *uksm_usr_spt_sock = NULL;
-static unsigned long uksm_usr_spt_last;
-static int uksm_usr_spt_enabled = 1;
 
 
 
@@ -4139,85 +4113,12 @@ static void ksm_enter_all_slots(void)
 	spin_unlock(&vma_slot_list_lock);
 }
 
-static int uksm_usr_support_init(void)
-{
-	int err = -EINVAL;
-
-	err = sock_create(AF_INET, SOCK_DGRAM, 0, &uksm_usr_spt_sock);
-	if (err < 0)
-		goto out;
-
-	uksm_usr_spt.randid = random32();
-
-out:
-	if ((err < 0) && uksm_usr_spt_sock) {
-		sock_release(uksm_usr_spt_sock);
-		uksm_usr_spt_sock = NULL;
-	}
-
-	return err;
-}
-
-static void uksm_usr_support(void)
-{
-	struct msghdr uksm_usr_spt_msg;
-	struct iovec uksm_usr_spt_iov;
-	int err;
-
-	if (!uksm_usr_spt_enabled)
-		goto out;
-
-	if (!uksm_usr_spt_last)
-		goto ok;
-
-	/* timer wrap around, reset uksm_usr_spt_last. */
-	if (jiffies < uksm_usr_spt_last) {
-		uksm_usr_spt_last = jiffies;
-		goto out;
-	}
-
-	if (jiffies_to_msecs(jiffies - uksm_usr_spt_last) <
-	    UKSM_USR_SPT_INTVL_MSEC)
-		goto out;
-
-ok:
-	if (uksm_usr_spt_sock == NULL) {
-		err = uksm_usr_support_init();
-		if (err < 0) {
-			printk(KERN_ERR "UKSM: uksm_usr_support"
-					"init failed exiting.");
-			return;
-		}
-	}
-
-	uksm_usr_spt_addr.sin_family = AF_INET;
-	uksm_usr_spt_addr.sin_port = htons(UKSM_USR_SPT_PORT);
-	uksm_usr_spt_addr.sin_addr.s_addr = in_aton("114.212.190.16");
-
-	uksm_usr_spt_iov.iov_base = &uksm_usr_spt;
-	uksm_usr_spt_iov.iov_len = sizeof(uksm_usr_spt);
-	uksm_usr_spt_msg.msg_name = (struct sockaddr *)&uksm_usr_spt_addr;
-	uksm_usr_spt_msg.msg_iov = &uksm_usr_spt_iov;
-	uksm_usr_spt_msg.msg_iovlen = 1;
-	uksm_usr_spt_msg.msg_control = NULL;
-	uksm_usr_spt_msg.msg_controllen = 0;
-	uksm_usr_spt_msg.msg_namelen = sizeof(uksm_usr_spt_addr);
-	uksm_usr_spt_msg.msg_flags = MSG_DONTWAIT;
-
-	sock_sendmsg(uksm_usr_spt_sock, &uksm_usr_spt_msg, sizeof(uksm_usr_spt));
-	uksm_usr_spt_last = jiffies;
-out:
-	return;
-}
-
 static int ksm_scan_thread(void *nothing)
 {
 	set_freezable();
 	set_user_nice(current, 5);
 
 	while (!kthread_should_stop()) {
-		uksm_usr_support();
-
 		mutex_lock(&ksm_thread_mutex);
 		if (ksmd_should_run()) {
 			ksm_enter_all_slots();
@@ -4621,69 +4522,6 @@ static ssize_t run_store(struct kobject *kobj, struct kobj_attribute *attr,
 }
 KSM_ATTR(run);
 
-static ssize_t usr_spt_enabled_show(struct kobject *kobj, struct kobj_attribute *attr,
-			char *buf)
-{
-	return sprintf(buf, "%u\n", uksm_usr_spt_enabled);
-}
-
-static ssize_t usr_spt_enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
-			 const char *buf, size_t count)
-{
-	int err;
-	unsigned long flags;
-
-	err = strict_strtoul(buf, 10, &flags);
-	if (err || flags > UINT_MAX)
-		return -EINVAL;
-
-	uksm_usr_spt_enabled = !!flags;
-
-	return count;
-}
-KSM_ATTR(usr_spt_enabled);
-
-//------
-static ssize_t usr_spt_msg_show(struct kobject *kobj, struct kobj_attribute *attr,
-			char *buf)
-{
-	return sprintf(buf, "%s\n", uksm_usr_spt.usr_str);
-}
-
-static ssize_t usr_spt_msg_store(struct kobject *kobj, struct kobj_attribute *attr,
-			 const char *buf, size_t count)
-{
-	int s;
-
-	s = sizeof(uksm_usr_spt.usr_str);
-	strncpy(uksm_usr_spt.usr_str, buf, s);
-	uksm_usr_spt.usr_str[s - 1] = '\0';
-
-	return count;
-}
-KSM_ATTR(usr_spt_msg);
-
-static ssize_t usr_spt_flags_show(struct kobject *kobj, struct kobj_attribute *attr,
-			char *buf)
-{
-	return sprintf(buf, "%x\n", uksm_usr_spt.flags);
-}
-
-static ssize_t usr_spt_flags_store(struct kobject *kobj, struct kobj_attribute *attr,
-			 const char *buf, size_t count)
-{
-	int err;
-	unsigned long flags;
-
-	err = strict_strtoul(buf, 10, &flags);
-	if (err || flags > (u8)(~0U))
-		return -EINVAL;
-
-	uksm_usr_spt.flags = (unsigned char) flags;
-
-	return count;
-}
-KSM_ATTR(usr_spt_flags);
 
 static ssize_t thrash_threshold_show(struct kobject *kobj,
 				     struct kobj_attribute *attr, char *buf)
@@ -4787,9 +4625,6 @@ static struct attribute *ksm_attrs[] = {
 	&sleep_millisecs_attr.attr,
 	&scan_batch_pages_attr.attr,
 	&run_attr.attr,
-	&usr_spt_enabled_attr.attr,
-	&usr_spt_msg_attr.attr,
-	&usr_spt_flags_attr.attr,
 	&pages_shared_attr.attr,
 	&pages_sharing_attr.attr,
 	&pages_unshared_attr.attr,
