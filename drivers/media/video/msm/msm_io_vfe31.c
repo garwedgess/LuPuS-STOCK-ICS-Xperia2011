@@ -234,7 +234,7 @@ int msm_camio_clk_enable(enum msm_camio_clk_type clktype)
 	case CAMIO_CSI0_CLK:
 		camio_csi_clk =
 		clk = clk_get(NULL, "csi_clk");
-		msm_camio_clk_rate_set_2(clk, 153600000);
+		msm_camio_clk_rate_set_2(clk, 384000000);
 		break;
 	case CAMIO_CSI0_VFE_CLK:
 		camio_csi_vfe_clk =
@@ -248,7 +248,7 @@ int msm_camio_clk_enable(enum msm_camio_clk_type clktype)
 	case CAMIO_JPEG_CLK:
 		camio_jpeg_clk =
 		clk = clk_get(NULL, "jpeg_clk");
-		clk_set_min_rate(clk, 144000000);
+		clk_set_min_rate(clk, 153600000);
 		break;
 	case CAMIO_JPEG_PCLK:
 		camio_jpeg_pclk =
