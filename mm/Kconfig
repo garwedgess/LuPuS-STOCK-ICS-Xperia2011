@@ -165,10 +165,6 @@ config SPLIT_PTLOCK_CPUS
 	default "4096" if PARISC && !PA20
 	default "4"
 
-config CLEANCACHE
-	bool "Enable cleancache driver to cache clean pages if tmem is 		present"
-	default y
-
 #
 # support for page migration
 #
